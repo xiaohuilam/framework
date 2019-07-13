@@ -3,6 +3,7 @@
 namespace Illuminate\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Arr;
 
 class SetCacheHeaders
 {
@@ -30,6 +31,10 @@ class SetCacheHeaders
 
         if (isset($options['etag']) && $options['etag'] === true) {
             $options['etag'] = md5($response->getContent());
+        }
+
+        if ($max_age = Arr::get($options, 'max_age')) {
+            $response->setExpires(now()->addSeconds($max_age));
         }
 
         $response->setCache($options);
